@@ -25,14 +25,17 @@ namespace CR::embed{{
 }}
 )";
 
-static const char* c_srcProtoBegin = R"(#include <core/Span.h>
+static const char* c_srcProtoBegin = R"(#include "{0}.h"
 
-const CR::Core::Span<const std::byte> CR::embed::Get{}(){{
+#include <core/Span.h>
+
+const CR::Core::Span<const std::byte> CR::embed::Get{0}(){{
 	static const std::byte data[] = {{)";
 
 static const char* c_srcProtoEnd = R"(
 	};
-	return const CR::Core::Span<const std::byte>(data);
+
+	return CR::Core::Span<const std::byte>(data);
 }
 )";
 
@@ -71,6 +74,18 @@ int main(int argc, char** argv) {
 	Platform::MemoryMappedFile inputData(inputPath);
 
 	{
+		fs::path outputFolder = outputHeader;
+		outputFolder.remove_filename();
+		fs::create_directories(outputFolder);
+	}
+
+	{
+		fs::path outputFolder = outputSrc;
+		outputFolder.remove_filename();
+		fs::create_directories(outputFolder);
+	}
+
+	{
 		std::string header = fmt::format(c_headerProto, varName);
 		ofstream headerFile(outputHeader);
 		headerFile << header;
@@ -84,7 +99,7 @@ int main(int argc, char** argv) {
 			if(i % 18 == 0) { srcFile << "\n\t\t"; }
 			std::array<char, 10> str;
 			auto [strEnd, err] = to_chars(data(str), data(str) + size(str), (uint8_t)inputData[i], 16);
-			srcFile << "0x" << std::string_view(data(str), strEnd - data(str));
+			srcFile << "std::byte(0x" << std::string_view(data(str), strEnd - data(str)) << ')';
 			if(i != inputData.size() - 1) { srcFile << ", "; }
 		}
 
