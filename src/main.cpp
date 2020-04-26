@@ -53,8 +53,7 @@ int main(int argc, char** argv) {
 	fs::path inputPath{inputFileName};
 	fs::path outputPath{outputFileName};
 
-	inputPath  = Platform::GetCurrentProcessPath() / inputPath;
-	outputPath = Platform::GetCurrentProcessPath() / outputPath;
+	filesystem::current_path(Platform::GetCurrentProcessPath());
 
 	if(!fs::exists(inputPath)) {
 		CLI::Error error{"input file", "Input file doesn't exist", CLI::ExitCodes::FileError};
