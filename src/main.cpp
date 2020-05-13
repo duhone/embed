@@ -72,6 +72,17 @@ int main(int argc, char** argv) {
 
 	Platform::MemoryMappedFile inputData(inputPath);
 
+	bool needsUpdating = false;
+	if(!fs::exists(outputHeader) || (fs::last_write_time(outputHeader) <= fs::last_write_time(inputPath))) {
+		needsUpdating = true;
+	}
+	if(!fs::exists(outputSrc) || (fs::last_write_time(outputSrc) <= fs::last_write_time(inputPath))) {
+		needsUpdating = true;
+	}
+	if(!needsUpdating) {
+		return 0;    // nothing to do;
+	}
+
 	{
 		fs::path outputFolder = outputHeader;
 		outputFolder.remove_filename();

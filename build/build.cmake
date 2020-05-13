@@ -19,14 +19,8 @@ add_executable(embed
 )
 
 settingsCR(embed)	
+createPCH(embed)
 			
-target_precompile_headers(embed PRIVATE 
-	<3rdParty/cli11.h>
-	<3rdParty/fmt.h>
-	<3rdParty/function2.h>
-	<3rdParty/spdlog.h>
-)
-
 target_link_libraries(embed 
 	cli11
 	fmt
