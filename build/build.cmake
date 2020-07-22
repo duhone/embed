@@ -18,8 +18,8 @@ add_executable(embed
 	${TEST_FILES}
 )
 
-settingsCR(embed)	
-createPCH(embed)
+settingsCR(embed)
+usePCH(embed core)
 			
 target_link_libraries(embed 
 	cli11
